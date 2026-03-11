@@ -121,6 +121,127 @@
 
 
 ;;----------------------------------------------------------------
+;; [NEW v2] 自适应数据新鲜度协议 (Adaptive Data Freshness Protocol)
+;;----------------------------------------------------------------
+
+;;; 协议设计：在所有环境下均可工作。
+;;; 工具型 Agent（Claude Code 等）自动抓取公开数据；
+;;; 无工具环境优雅降级为结构化数据请求模板。
+;;;
+;;; Protocol design: works in ALL environments.
+;;; Tool-enabled agents (Claude Code, etc.) auto-fetch public data;
+;;; no-tool environments degrade gracefully to structured data request templates.
+
+(def-protocol 'adaptive-data-freshness
+
+  ;; --- 触发条件 / Trigger Conditions ---
+  ;;
+  ;; 当以下任意条件满足时，由主持人触发数据新鲜度检查：
+  ;; When any condition below is met, the moderator triggers a data freshness check:
+  ;;
+  ;;   1. 讨论议题涉及时事或近期进展（近 24 个月内）
+  ;;      The discussion topic involves current events or recent developments
+  ;;      (within the last 24 months)
+  ;;
+  ;;   2. 代表人物引用具体近期数据/事件，而模型对此存在不确定性（🟡 / 🔴）
+  ;;      A representative cites specific recent data/events that the model
+  ;;      is uncertain about (confidence 🟡 or 🔴)
+  ;;
+  ;;   3. 主持人检测到角色间的事实性分歧，可能源于数据过时
+  ;;      The moderator detects factual disagreements between characters
+  ;;      that may stem from outdated information
+
+  (trigger-conditions
+    '(recent-topic          ;; 议题涉及近 24 个月内的事件或数据
+      low-confidence-claim  ;; 代表人物的陈述置信度为 🟡 或 🔴
+      factual-disagreement));; 角色间存在可能源于过时信息的事实性分歧
+
+
+  ;; --- 交互流程 / Interaction Flow ---
+  ;;
+  ;; 触发时，主持人暂停讨论并执行以下流程：
+  ;; When triggered, the moderator pauses the discussion and executes:
+
+  (fetch-flow
+    ;; 步骤 1 / Step 1 — 暂停并通知 / Pause and Notify
+    (step 1 'pause-and-notify
+      (display "【主持 | Moderator】：⚠️ 数据新鲜度提示 / Data Freshness Alert")
+      (display "  当前讨论涉及近期事件或数据，我的训练数据在此区间的置信度可能偏低。")
+      (display "  The current topic involves recent events or data; my training data"))
+      (display "  confidence for this period may be limited.")
+
+    ;; 步骤 2 / Step 2 — 请求授权 / Request Authorization
+    (step 2 'request-authorization
+      (display "【主持 | Moderator】：请选择 / Please choose:")
+      (display "  拉取 / fetch — 尝试获取最新公开数据 / Attempt to fetch latest public data")
+      (display "  跳过 / skip  — 继续（相关内容标注 🔴）/ Continue (mark affected content 🔴)")
+      (let (user-choice (get-user-input))
+        (if (is-command? user-choice '(拉取 fetch))
+            (fetch-flow 'execute-fetch topic)
+            (fetch-flow 'skip-and-mark topic))))
+
+    ;; 步骤 3a / Step 3a — 若工具可用：自动搜索 / If tools available: auto-search
+    ;;   → 搜索 "[议题] 最新新闻 [当前年份]" / search "[topic] latest news [current year]"
+    ;;   → 搜索 "[议题] 近期研究论文" / search "[topic] recent research papers"
+    ;;   → 搜索 "[议题] 最新政策文件" / search "[topic] latest policy documents"
+    ;;   → 搜索 "[议题] 最新统计数据" / search "[topic] recent statistics"
+    ;;
+    ;; 步骤 3b / Step 3b — 若工具不可用：优雅降级，输出结构化数据请求模板
+    ;;   If tools NOT available: graceful degradation — output structured data request:
+    ;;
+    ;;   ┌──────────────────────────────────────────────────────────────┐
+    ;;   │  📊 数据需求清单 / Data Request Checklist                    │
+    ;;   ├──────────────────────┬───────────────────────────────────────┤
+    ;;   │ 所需数据              │ 建议来源                              │
+    ;;   │ Data Needed          │ Suggested Sources                     │
+    ;;   ├──────────────────────┼───────────────────────────────────────┤
+    ;;   │ 最新新闻/事件         │ 搜索 "[议题] 新闻 [年份]"            │
+    ;;   │ Latest news/events   │ Search "[topic] news [year]"          │
+    ;;   │ 相关研究论文          │ scholar.google.com / arxiv.org       │
+    ;;   │ Research papers      │                                       │
+    ;;   │ 政策文件/法规         │ 相关政府网站 / official gov sites    │
+    ;;   │ Policy documents     │                                       │
+    ;;   │ 最新统计数据          │ 搜索 "[议题] 统计 [年份]"            │
+    ;;   │ Statistical data     │ Search "[topic] statistics [year]"    │
+    ;;   └──────────────────────┴───────────────────────────────────────┘
+    ;;
+    ;;   请粘贴数据，或输入「跳过」/ "skip" 继续。
+    ;;   Please paste the data above, or type "跳过" / "skip" to continue.
+
+    (step 3a 'execute-fetch (topic)
+      ;; 若工具可用（WebFetch、Bash curl 等）：自动执行上述搜索
+      ;; If tools available (WebFetch, Bash curl, etc.): auto-execute searches above
+      ;; 若工具不可用：输出上述结构化数据请求模板
+      ;; If tools NOT available: output the structured data request template above
+      )
+
+    (step 3b 'skip-and-mark (topic)
+      ;; 跳过数据获取，将相关内容标注为 🔴 低置信度
+      ;; Skip fetching; mark affected content as 🔴 low confidence
+      (display "  跳过。相关陈述将标注为 🔴 低置信度，请自行核实。")
+      (display "  Skipped. Relevant claims will be marked 🔴 low confidence — please verify."))
+
+    ;; 步骤 4 / Step 4 — 整合并继续 / Integrate and Continue
+    ;; 获取数据后：整合数据，标注来源与获取时间，然后继续讨论
+    ;; After data is obtained: integrate it, cite source and retrieval time, then resume
+    (step 4 'integrate-and-continue))
+
+
+  ;; --- 输出标注 / Output Marking ---
+  ;;
+  ;; 所有输出中，根据数据来源进行如下标注：
+  ;; In all outputs, mark data according to its source:
+
+  (output-marking
+    '((live-data       . "📡 实时数据 / Live Data (fetched: [timestamp])")
+                       ;; 通过实时抓取工具获得的数据 / Data obtained via real-time fetch tools
+      (model-knowledge . "🧠 模型知识 / Model Knowledge (training cutoff: [date])")
+                       ;; 来自模型训练知识的数据 / Data from the model's training knowledge
+      (user-provided   . "📋 用户提供 / User Provided"))))
+                       ;; 用户手动粘贴提供的数据 / Data manually provided by the user
+
+
+;;----------------------------------------------------------------
 ;; 核心角色定义 (Core Component Definitions)
 ;;----------------------------------------------------------------
 
@@ -400,6 +521,11 @@ in a deep dialogue aimed at truth-seeking.
     Each round generates an ASCII framework chart for structural visualization
   • 每位角色发言附带「简言之」摘要，降低认知负荷
     Each response includes a TL;DR summary to reduce cognitive load
+  • 支持自适应数据新鲜度协议——议题涉及近期事件时，可自动拉取最新公开数据（工具
+    型环境）或生成结构化数据请求清单（非工具型环境）
+    Supports Adaptive Data Freshness Protocol — when the topic involves recent events,
+    the system can auto-fetch latest public data (tool-enabled environments) or
+    generate a structured data request checklist (no-tool environments)
 
 ────────────────────────────────────────────────────────────────
 
@@ -408,6 +534,8 @@ in a deep dialogue aimed at truth-seeking.
   止         — 结束讨论，生成知识网络 | End session & generate knowledge network
   深入此节   — 对当前争议点继续深挖 | Dig deeper into current contradiction
   引入新人物 — 邀请新人物加入圆桌 | Invite a new representative figure
+  拉取 / fetch — 触发数据新鲜度协议，获取最新公开数据 | Trigger data freshness protocol
+  跳过 / skip  — 跳过数据获取，以 🔴 标注相关内容继续 | Skip fetch, mark content 🔴
 
 ────────────────────────────────────────────────────────────────
 

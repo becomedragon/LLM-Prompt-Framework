@@ -36,6 +36,19 @@
 | `止` | 结束讨论，生成最终知识网络 |
 | `深入此节` | 暂停推进，对当前核心争议点进行更深层挖掘 |
 | `引入新人物` | 邀请新的代表人物加入圆桌（主持人会提示你输入人物姓名） |
+| `拉取` / `fetch` | 触发数据新鲜度协议，尝试获取最新公开数据 |
+| `跳过` / `skip` | 跳过数据获取，以 🔴 低置信度标注相关内容继续讨论 |
+
+### 自适应数据新鲜度协议
+
+v2 新增**自适应数据新鲜度协议**，当讨论议题涉及近期事件或数据时自动触发：
+
+- **工具型环境**（Claude Code 等）：自动调用 WebFetch / Bash curl 搜索最新公开信息（新闻、研究论文、政策文件、统计数据等）。
+- **非工具型环境**（ChatGPT / Claude Web 等）：优雅降级，输出结构化数据请求清单，引导用户从推荐来源手动获取数据并粘贴。
+
+**触发时机**：议题涉及近 24 个月内的事件 | 代表人物引用近期数据置信度偏低（🟡/🔴）| 主持人检测到可能源于数据过时的事实性分歧
+
+**输出标注**：`📡 实时数据` / `🧠 模型知识` / `📋 用户提供`
 
 ### 推荐模型
 
@@ -90,6 +103,19 @@ After each round, the moderator generates an ASCII visualization of the thinking
 | `止` (Stop) | End the discussion and generate the final knowledge network |
 | `深入此节` (Deepen) | Pause advancement and dig deeper into the current core contradiction |
 | `引入新人物` (Add figure) | Invite a new representative figure to join the roundtable |
+| `拉取` / `fetch` | Trigger the Data Freshness Protocol to attempt fetching latest public data |
+| `跳过` / `skip` | Skip data fetching; mark affected content as 🔴 low confidence and continue |
+
+### Adaptive Data Freshness Protocol
+
+v2 introduces an **Adaptive Data Freshness Protocol** that triggers automatically when the topic involves recent events or data:
+
+- **Tool-enabled environments** (Claude Code, etc.): Automatically calls WebFetch / Bash curl to search for the latest public information (news, research papers, policy documents, statistical data, etc.).
+- **No-tool environments** (ChatGPT / Claude Web, etc.): Gracefully degrades to a structured data request checklist, guiding the user to manually retrieve data from suggested sources and paste it in.
+
+**Trigger points**: Topic involves events within the last 24 months | A representative cites recent data with low confidence (🟡/🔴) | Moderator detects factual disagreements that may stem from outdated information
+
+**Output markers**: `📡 Live Data` / `🧠 Model Knowledge` / `📋 User Provided`
 
 ### Recommended Models
 
