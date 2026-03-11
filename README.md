@@ -25,9 +25,12 @@
 LLM-Prompt-Framework/
 ├── README.md                          # 本文件
 └── prompts/
-    └── roundtable-seminar/            # 圆桌研讨会框架
+    ├── roundtable-seminar/            # 圆桌研讨会框架
+    │   ├── README.md                  # 框架说明文档
+    │   └── roundtable-seminar-v2.md   # 改进版双语 Prompt
+    └── business-structure/            # 商业结构分析框架
         ├── README.md                  # 框架说明文档
-        └── roundtable-seminar-v2.md   # 改进版双语 Prompt
+        └── business-structure-v2.md   # 改进版双语 Prompt
 ```
 
 所有提示词框架均位于 `prompts/` 目录下，每个框架拥有独立的子目录。
@@ -37,6 +40,7 @@ LLM-Prompt-Framework/
 | 框架名称 | 目录 | 简介 |
 |---|---|---|
 | 圆桌研讨会 (Roundtable Seminar) | [`prompts/roundtable-seminar/`](prompts/roundtable-seminar/) | 多角色结构化辩论框架，由主持人引导，邀请代表不同思想的历史/哲学人物进行深度对话 |
+| 商业结构分析 (Business Structure Analysis) | [`prompts/business-structure/`](prompts/business-structure/) | 系统战略分析框架，运用涡旋/结构动力学物理隐喻，对公司进行全生命周期结构演变解构 |
 
 ### 如何使用
 
@@ -85,9 +89,12 @@ Each framework is a carefully crafted structured prompt that guides large langua
 LLM-Prompt-Framework/
 ├── README.md                          # This file
 └── prompts/
-    └── roundtable-seminar/            # Roundtable Seminar framework
+    ├── roundtable-seminar/            # Roundtable Seminar framework
+    │   ├── README.md                  # Framework documentation
+    │   └── roundtable-seminar-v2.md   # Improved bilingual prompt
+    └── business-structure/            # Business Structure Analysis framework
         ├── README.md                  # Framework documentation
-        └── roundtable-seminar-v2.md   # Improved bilingual prompt
+        └── business-structure-v2.md   # Improved bilingual prompt
 ```
 
 All prompt frameworks live under `prompts/`, each in its own subdirectory.
@@ -97,6 +104,7 @@ All prompt frameworks live under `prompts/`, each in its own subdirectory.
 | Framework | Directory | Description |
 |---|---|---|
 | Roundtable Seminar (圆桌研讨会) | [`prompts/roundtable-seminar/`](prompts/roundtable-seminar/) | A structured multi-role debate framework where a moderator invites representative historical/philosophical figures to engage in deep dialogue |
+| Business Structure Analysis (商业结构分析) | [`prompts/business-structure/`](prompts/business-structure/) | A systems strategy framework using vortex/structural dynamics physics metaphors to deconstruct a company's full lifecycle structural evolution |
 
 ### How to Use
 
