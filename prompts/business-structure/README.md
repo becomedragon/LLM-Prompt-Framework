@@ -38,6 +38,19 @@
 | `对比 [公司名]` / `compare [company]` | 引入竞争对手，进行结构碰撞分析 |
 | `预测` / `predict` | 基于当前结构轨迹，预测下一个结构相变 |
 | `止` / `stop` | 结束分析，生成完整结构演变时间线 |
+| `拉取` / `fetch` | 触发数据新鲜度协议，尝试获取最新公开数据 |
+| `跳过` / `skip` | 跳过数据获取，以 🔴 低置信度标注相关内容继续分析 |
+
+### 自适应数据新鲜度协议
+
+v2 新增**自适应数据新鲜度协议**，当分析涉及近期数据时自动触发：
+
+- **工具型环境**（Claude Code 等）：自动调用 WebFetch / Bash curl 搜索最新公开信息（最新新闻、季度财报、战略动向、股价等）。
+- **非工具型环境**（ChatGPT / Claude Web 等）：优雅降级，输出结构化数据请求清单，引导用户从推荐来源手动获取数据并粘贴。
+
+**触发时机**：分析近 24 个月阶段 | `对比` 指令 | `预测` 指令 | 置信度降至 🟡/🔴
+
+**输出标注**：`📡 实时数据` / `🧠 模型知识` / `📋 用户提供`
 
 ### 推荐模型
 
@@ -93,6 +106,19 @@ The framework centers on the **"Three-Talent Structure"** (Heaven / Human / Eart
 | `对比 [公司名]` / `compare [company]` | Introduce a competitor for structural collision analysis |
 | `预测` / `predict` | Based on the current structural trajectory, predict the next phase transition |
 | `止` / `stop` | Conclude analysis and generate the full structural evolution timeline |
+| `拉取` / `fetch` | Trigger the Data Freshness Protocol to attempt fetching latest public data |
+| `跳过` / `skip` | Skip data fetching; mark affected content as 🔴 low confidence and continue |
+
+### Adaptive Data Freshness Protocol
+
+v2 introduces an **Adaptive Data Freshness Protocol** that triggers automatically when recent data is needed:
+
+- **Tool-enabled environments** (Claude Code, etc.): Automatically calls WebFetch / Bash curl to search for the latest public information (news, quarterly earnings, strategic moves, stock price, etc.).
+- **No-tool environments** (ChatGPT / Claude Web, etc.): Gracefully degrades to a structured data request checklist, guiding the user to manually retrieve data from suggested sources and paste it in.
+
+**Trigger points**: Analyzing the most recent 24-month phase | `compare` command | `predict` command | Confidence drops to 🟡/🔴
+
+**Output markers**: `📡 Live Data` / `🧠 Model Knowledge` / `📋 User Provided`
 
 ### Recommended Models
 

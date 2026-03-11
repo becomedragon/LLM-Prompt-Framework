@@ -39,8 +39,8 @@ LLM-Prompt-Framework/
 
 | 框架名称 | 目录 | 简介 |
 |---|---|---|
-| 圆桌研讨会 (Roundtable Seminar) | [`prompts/roundtable-seminar/`](prompts/roundtable-seminar/) | 多角色结构化辩论框架，由主持人引导，邀请代表不同思想的历史/哲学人物进行深度对话 |
-| 商业结构分析 (Business Structure Analysis) | [`prompts/business-structure/`](prompts/business-structure/) | 系统战略分析框架，运用涡旋/结构动力学物理隐喻，对公司进行全生命周期结构演变解构 |
+| 圆桌研讨会 (Roundtable Seminar) | [`prompts/roundtable-seminar/`](prompts/roundtable-seminar/) | 多角色结构化辩论框架，由主持人引导，邀请代表不同思想的历史/哲学人物进行深度对话。支持自适应数据新鲜度协议（`拉取`/`fetch` 自动获取最新数据）。 |
+| 商业结构分析 (Business Structure Analysis) | [`prompts/business-structure/`](prompts/business-structure/) | 系统战略分析框架，运用涡旋/结构动力学物理隐喻，对公司进行全生命周期结构演变解构。支持自适应数据新鲜度协议（`拉取`/`fetch` 自动获取最新数据）。 |
 
 ### 如何使用
 
@@ -103,8 +103,8 @@ All prompt frameworks live under `prompts/`, each in its own subdirectory.
 
 | Framework | Directory | Description |
 |---|---|---|
-| Roundtable Seminar (圆桌研讨会) | [`prompts/roundtable-seminar/`](prompts/roundtable-seminar/) | A structured multi-role debate framework where a moderator invites representative historical/philosophical figures to engage in deep dialogue |
-| Business Structure Analysis (商业结构分析) | [`prompts/business-structure/`](prompts/business-structure/) | A systems strategy framework using vortex/structural dynamics physics metaphors to deconstruct a company's full lifecycle structural evolution |
+| Roundtable Seminar (圆桌研讨会) | [`prompts/roundtable-seminar/`](prompts/roundtable-seminar/) | A structured multi-role debate framework where a moderator invites representative historical/philosophical figures to engage in deep dialogue. Supports Adaptive Data Freshness Protocol (`fetch` auto-retrieves latest public data). |
+| Business Structure Analysis (商业结构分析) | [`prompts/business-structure/`](prompts/business-structure/) | A systems strategy framework using vortex/structural dynamics physics metaphors to deconstruct a company's full lifecycle structural evolution. Supports Adaptive Data Freshness Protocol (`fetch` auto-retrieves latest public data). |
 
 ### How to Use
 
